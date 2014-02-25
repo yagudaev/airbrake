@@ -91,4 +91,23 @@ class AirbrakeGenerator < Rails::Generator::Base
   def plugin_is_present?
     File.exists?('vendor/plugins/airbrake')
   end
+
+  def secure?
+    options[:secure]
+  end
+
+  def test_mode?
+    options[:test_mode]
+  end
+
+  def configuration_output
+    output = <<-eos
+Airbrake.configure do |config|
+  config.api_key = #{api_key_expression}
+    eos
+
+    output << "  config.secure = true\n" if secure?
+    output << "  config.test_mode = true\n" if test_mode?
+    output << "end"
+  end
 end
